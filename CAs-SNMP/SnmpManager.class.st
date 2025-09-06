@@ -2,7 +2,8 @@ Class {
 	#name : 'SnmpManager',
 	#superclass : 'Object',
 	#instVars : [
-		'sessions'
+		'sessions',
+		'service'
 	],
 	#category : 'CAs-SNMP',
 	#package : 'CAs-SNMP'
@@ -10,15 +11,17 @@ Class {
 
 { #category : 'initialization' }
 SnmpManager >> closeAll [
-
-	sessions do: [ :each | each close ].sessions := OrderedCollection new
+service stop.
+	sessions do: [ :each | each close ].
+	sessions := OrderedCollection new
 ]
 
 { #category : 'initialization' }
 SnmpManager >> initialize [
 
 	super initialize.
-	sessions:= OrderedCollection new.
+	sessions := OrderedCollection new.
+	self setupService
 ]
 
 { #category : 'as yet unclassified' }
@@ -49,6 +52,22 @@ SnmpManager >> send: aMsg to: aHostNameOrIP [
 SnmpManager >> sessions [
 ^
 	sessions 
+]
+
+{ #category : 'initialization' }
+SnmpManager >> setupService [
+
+	service := TKTParameterizableService new.
+	service name: 'Generic watcher service'.
+	service stepDelay: (Duration seconds: 1).
+	service onSetUpDo: [ self traceCr: 'Snmp watcher started' ].
+	service onTearDownDo: [
+		self traceCr: 'Snmp watcher finished' "mgr closeAll" ].
+	service step: [ self watcher ].
+	service start
+
+
+	"TKTParameterizableService allInstances ."
 ]
 
 { #category : 'waiting' }
@@ -87,4 +106,18 @@ SnmpManager >> waitForDataFor: timeout onSocket: aSocket [
 			"readSemaphore waitTimeoutMilliseconds: msecsDelta - msecsElapsed"
 			(Delay forMilliseconds: 10) wait ].
 		^ rcvBuf first: res first
+]
+
+{ #category : 'as yet unclassified' }
+SnmpManager >> watcher [
+
+	| future activeWatches |
+	self traceCr: '------'.
+	activeWatches := sessions select: [ :each | each watches isNotEmpty ].
+	activeWatches do: [ :sess |
+						sess watches do: [ :oid |
+					future := [ sess getSingle: oid ] future.
+					future onSuccessDo: [ :newval | "diff := newval - oldval."
+							self traceCr:  sess hostNameOrIP,', Bytes in: ' , newval asString
+							"oldval := newval" ] ] ]
 ]

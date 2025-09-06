@@ -3,17 +3,30 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'agent',
-		'nextReqId'
+		'nextReqId',
+		'watches',
+		'hostNameOrIP'
 	],
 	#category : 'CAs-SNMP',
 	#package : 'CAs-SNMP'
 }
 
+{ #category : 'adding' }
+SnmpSession >> addWatch: anOid [
+
+	watches add: anOid 
+]
+
+{ #category : 'accessing' }
+SnmpSession >> agent [ ^
+
+	agent 
+]
+
 { #category : 'accessing' }
 SnmpSession >> agent: aHostNameOrIP [
-
-	agent := NetNameResolver addressFromString: aHostNameOrIP.
-	
+hostNameOrIP:=aHostNameOrIP.
+	agent := NetNameResolver addressFromString: aHostNameOrIP
 ]
 
 { #category : 'initialization' }
@@ -45,14 +58,25 @@ SnmpSession >> getSingle: anOid [
 	^ resp at: oid 
 ]
 
+{ #category : 'accessing' }
+SnmpSession >> hostNameOrIP [ ^hostNameOrIP
+]
+
 { #category : 'initialization' }
-SnmpSession >> initialize [ 
-nextReqId:=0
+SnmpSession >> initialize [
+
+	nextReqId := 0.
+	watches:= OrderedCollection new
 ]
 
 { #category : 'initialization' }
 SnmpSession >> nextReqId [
 nextReqId:=nextReqId+1.^nextReqId
+]
+
+{ #category : 'adding' }
+SnmpSession >> removeWatch:anOid [
+watches remove:anOid ifAbsent: []
 ]
 
 { #category : 'instructions' }
@@ -87,4 +111,10 @@ SnmpSession >> waitForDataFor: timeout onSocket: aSocket [
 						^ timedOutBlock value ].
 			(Delay forMilliseconds: 10) wait ].
 	^ rcvBuf first: res first
+]
+
+{ #category : 'adding' }
+SnmpSession >> watches [ ^watches 
+
+	
 ]
