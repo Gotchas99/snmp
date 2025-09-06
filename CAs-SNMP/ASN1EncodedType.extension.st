@@ -31,6 +31,7 @@ ASN1EncodedType class >> decodeValue: anEncodedValue [
 
 	| type tag val typeRoot | 
 	tag := anEncodedValue tag.
+(	(anEncodedValue isConstructed not)and:[anEncodedValue isEmpty ])ifTrue: [ ^nil]. 
 	typeRoot := tag clazz = 'UNIVERSAL'
 		            ifTrue: [ self ]
 		            ifFalse: [ ASN1SnmpPrimitiveType ].
