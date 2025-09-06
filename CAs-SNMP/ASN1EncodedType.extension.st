@@ -29,10 +29,12 @@ ASN1EncodedType class >> createUniversalTagNumberMap [
 { #category : '*CAs-SNMP' }
 ASN1EncodedType class >> decodeValue: anEncodedValue [
 
-	| type tag val |
+	| type tag val typeRoot | 
 	tag := anEncodedValue tag.
-	"self assert: tag clazz = 'UNIVERSAL'."
-	type := self allSubclasses detect: [ :cls |
+	typeRoot := tag clazz = 'UNIVERSAL'
+		            ifTrue: [ self ]
+		            ifFalse: [ ASN1SnmpPrimitiveType ].
+	type := typeRoot allSubclasses detect: [ :cls |
 		        cls tagNumber = tag number ].
 	val := type decode: anEncodedValue contents.
 	^ val

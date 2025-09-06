@@ -43,10 +43,10 @@ VarBind >> initialize [ super initialize .
 ]
 
 { #category : 'accessing' }
-VarBind >> oid: anOID [
+VarBind >> oid: anOid [
 
-	oid := anOID.
-	(oid first=$.)ifTrue: [ oid:=oid allButFirst ]
+	oid := anOid.
+	oid first = $. ifTrue: [ oid := oid allButFirst ]
 ]
 
 { #category : 'accessing' }

@@ -38,10 +38,11 @@ SnmpSession >> get: listOfOids [
 { #category : 'instructions' }
 SnmpSession >> getSingle: anOid [
 
-	| resp |
-		
-	resp := self get: anOid .
-	^ resp at: anOid 
+	| resp oid |
+		oid := anOid.
+	oid first = $. ifTrue: [ oid := oid allButFirst ].
+	resp := self get: oid .
+	^ resp at: oid 
 ]
 
 { #category : 'initialization' }
