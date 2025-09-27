@@ -64,9 +64,12 @@ SnmpSession >> hostNameOrIP [ ^hostNameOrIP
 
 { #category : 'initialization' }
 SnmpSession >> initialize [
+	"För att få requst-id som inte kolliderar även om man har två sessioner mot samma agent. 
+	skala till fem siffor"
 
-	nextReqId := 0.
-	watches:= OrderedCollection new
+	nextReqId := (10000 + (22000 * SharedRandom globalGenerator next))
+		             asInteger. 
+	watches := OrderedCollection new
 ]
 
 { #category : 'initialization' }

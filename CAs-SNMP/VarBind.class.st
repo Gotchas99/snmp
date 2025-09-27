@@ -45,8 +45,11 @@ VarBind >> initialize [ super initialize .
 { #category : 'accessing' }
 VarBind >> oid: anOid [
 
+	| snmpOid |
+	snmpOid := '1.3.6.1.'.
 	oid := anOid.
-	oid first = $. ifTrue: [ oid := oid allButFirst ]
+	oid first = $. ifTrue: [ oid := oid allButFirst ].
+	(oid beginsWith: snmpOid) ifFalse: [ oid := snmpOid , oid ] 
 ]
 
 { #category : 'accessing' }

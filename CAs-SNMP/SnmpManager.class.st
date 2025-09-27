@@ -58,13 +58,23 @@ SnmpManager >> sessions [
 SnmpManager >> setupService [
 
 	service := TKTParameterizableService new.
-	service name: 'Generic watcher service'.
+	service name: 'SNMP watcher service'.
 	service stepDelay: (Duration seconds: 1).
 	service onSetUpDo: [ self traceCr: 'Snmp watcher started' ].
 	service onTearDownDo: [
 		self traceCr: 'Snmp watcher finished' "mgr closeAll" ].
 	service step: [ self watcher ].
 	service start
+
+
+	"TKTParameterizableService allInstances ."
+]
+
+{ #category : 'initialization' }
+SnmpManager >> stopService [
+
+	service stop.
+"	service:= nil."
 
 
 	"TKTParameterizableService allInstances ."
@@ -112,12 +122,13 @@ SnmpManager >> waitForDataFor: timeout onSocket: aSocket [
 SnmpManager >> watcher [
 
 	| future activeWatches |
-	self traceCr: '------'.
+	self traceCr: '---*---'.
 	activeWatches := sessions select: [ :each | each watches isNotEmpty ].
 	activeWatches do: [ :sess |
-						sess watches do: [ :oid |
+			sess watches do: [ :oid |
 					future := [ sess getSingle: oid ] future.
 					future onSuccessDo: [ :newval | "diff := newval - oldval."
-							self traceCr:  sess hostNameOrIP,', Bytes in: ' , newval asString
+							self traceCr:
+								sess hostNameOrIP , ', Bytes in: ' , newval asString
 							"oldval := newval" ] ] ]
 ]
