@@ -5,8 +5,9 @@ Class {
 		'oid',
 		'value'
 	],
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-Protocol',
+	#package : 'CAs-SNMP',
+	#tag : 'Protocol'
 }
 
 { #category : 'as yet unclassified' }

@@ -1,5 +1,5 @@
 Class {
-	#name : 'ASN1SnmpGauge32',
+	#name : 'ASN1SnmpTimeTicks',
 	#superclass : 'ASN1SnmpNumericType',
 	#category : 'CAs-SNMP-ASN1',
 	#package : 'CAs-SNMP',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'accessing' }
-ASN1SnmpGauge32 class >> snmpType [
+ASN1SnmpTimeTicks class >> snmpType [
 
-	^ 'Gauge32'
+	^ 'TimeTicks'
 ]

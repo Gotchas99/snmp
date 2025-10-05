@@ -1,8 +1,9 @@
 Class {
 	#name : 'ASN1SnmpIpAddress',
 	#superclass : 'ASN1SnmpPrimitiveType',
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-ASN1',
+	#package : 'CAs-SNMP',
+	#tag : 'ASN1'
 }
 
 { #category : 'codec' }

@@ -11,8 +11,9 @@ Class {
 	#classInstVars : [
 		'pduCodes'
 	],
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-Protocol',
+	#package : 'CAs-SNMP',
+	#tag : 'Protocol'
 }
 
 { #category : 'class initialization' }
@@ -25,6 +26,18 @@ PDU class >> initialize [
 { #category : 'instance creation' }
 PDU class >> newGet [
 ^self new get
+]
+
+{ #category : 'instance creation' }
+PDU class >> newGetNext [
+
+	^ self new getNext
+]
+
+{ #category : 'instance creation' }
+PDU class >> newResponse [
+
+	^ self new response
 ]
 
 { #category : 'accessing' }
@@ -51,9 +64,10 @@ PDU >> asAsn1Value [
 ^ self asn1TypeClass new newValue: self 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 PDU >> asn1TypeClass [
-^ASN1PDUType classForPDUtype: pduType 
+
+	^ ASN1PDUType classForPDUtype: (pduType,'-PDU')
 ]
 
 { #category : 'enumerating' }
@@ -81,10 +95,22 @@ PDU >> encodeOn: aStream [
 	
 ]
 
+{ #category : 'accessing' }
+PDU >> firstOid [
+
+	^self varbinds keys first
+]
+
 { #category : 'actions api' }
 PDU >> get [
 
-	pduType := 'Get-PDU'
+	pduType := 'Get'
+]
+
+{ #category : 'actions api' }
+PDU >> getNext [
+
+	pduType := 'GetNext'
 ]
 
 { #category : 'initialization' }
@@ -106,22 +132,36 @@ PDU >> isError [ ^error >0
 PDU >> pduType [ ^pduType
 ]
 
+{ #category : 'printing' }
+PDU >> printOn: aStream [
+
+	aStream << 'a ' << pduType
+]
+
 { #category : 'instance creation' }
 PDU >> readFrom: enc [
 	"make sure it is a Response PDU"
 
 	| varbindList |
 	self assert: (enc tag isLabelled: 'CONTEXT:2').
+	self response.
 	reqId := ASN1EncodedType decodeValue: enc elements first.
 	error := ASN1EncodedType decodeValue: enc elements second.
 	errIndex := ASN1EncodedType decodeValue: enc elements third.
-varbindList := ASN1EncodedType decodeValue: enc elements fourth.
-	varbinds:=Dictionary newFrom: (varbindList collect:[:each|Association key: each  first value:each second] ).
+	varbindList := ASN1EncodedType decodeValue: enc elements fourth.
+	varbinds := Dictionary newFrom: (varbindList collect: [ :each |
+			             Association key: each first value: each second ]).
 	^ self
 ]
 
 { #category : 'accessing' }
 PDU >> reqId:anInt [ reqId:=anInt 
+]
+
+{ #category : 'actions api' }
+PDU >> response [
+
+	pduType := 'Response'
 ]
 
 { #category : 'converting' }

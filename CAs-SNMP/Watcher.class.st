@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'prev'
 	],
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-Application',
+	#package : 'CAs-SNMP',
+	#tag : 'Application'
 }
 
 { #category : 'initialization' }

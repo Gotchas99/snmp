@@ -4,8 +4,9 @@ Class {
 	#classVars : [
 		'snmpTagNumbers'
 	],
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-ASN1',
+	#package : 'CAs-SNMP',
+	#tag : 'ASN1'
 }
 
 { #category : 'accessing' }

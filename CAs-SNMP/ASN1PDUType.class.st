@@ -1,8 +1,9 @@
 Class {
 	#name : 'ASN1PDUType',
 	#superclass : 'ASN1SequenceType',
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#category : 'CAs-SNMP-ASN1',
+	#package : 'CAs-SNMP',
+	#tag : 'ASN1'
 }
 
 { #category : 'adding' }
@@ -29,6 +30,12 @@ ASN1PDUType >> asn1ValueClass [ ^ASN1PDUValue
 ]
 
 { #category : 'accessing' }
-ASN1PDUType >> tag [ 
-^ASN1Tag clazz:nil number: 0.
+ASN1PDUType >> tag [
+
+	^ ASN1Tag clazz: nil number: self tagNumber 
+]
+
+{ #category : 'accessing' }
+ASN1PDUType >> tagNumber [ 
+^self subclassResponsibility 
 ]

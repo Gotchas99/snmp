@@ -5,13 +5,30 @@ Class {
 		'sessions',
 		'service'
 	],
-	#category : 'CAs-SNMP',
-	#package : 'CAs-SNMP'
+	#classVars : [
+		'Default'
+	],
+	#category : 'CAs-SNMP-Application',
+	#package : 'CAs-SNMP',
+	#tag : 'Application'
 }
+
+{ #category : 'accessing' }
+SnmpManager class >> default [
+
+	^ Default ifNil:[Default:= self new]
+]
+
+{ #category : 'accessing' }
+SnmpManager class >> reset [ 
+Default ifNotNil:[Default shutdown].
+	Default:=nil
+]
 
 { #category : 'initialization' }
 SnmpManager >> closeAll [
-service stop.
+self 
+	stopService.
 	sessions do: [ :each | each close ].
 	sessions := OrderedCollection new
 ]
@@ -21,7 +38,7 @@ SnmpManager >> initialize [
 
 	super initialize.
 	sessions := OrderedCollection new.
-	self setupService
+"self setupService"
 ]
 
 { #category : 'as yet unclassified' }
@@ -54,9 +71,14 @@ SnmpManager >> sessions [
 	sessions 
 ]
 
-{ #category : 'initialization' }
-SnmpManager >> setupService [
+{ #category : 'as yet unclassified' }
+SnmpManager >> shutdown [
 
+	self closeAll 
+]
+
+{ #category : 'initialization' }
+SnmpManager >> startService [
 	service := TKTParameterizableService new.
 	service name: 'SNMP watcher service'.
 	service stepDelay: (Duration seconds: 1).
@@ -64,20 +86,19 @@ SnmpManager >> setupService [
 	service onTearDownDo: [
 		self traceCr: 'Snmp watcher finished' "mgr closeAll" ].
 	service step: [ self watcher ].
+
 	service start
 
-
 	"TKTParameterizableService allInstances ."
+
 ]
 
 { #category : 'initialization' }
 SnmpManager >> stopService [
 
-	service stop.
-"	service:= nil."
-
-
-	"TKTParameterizableService allInstances ."
+	service stop
+	.	service:= nil.
+		"TKTParameterizableService allInstances ."
 ]
 
 { #category : 'waiting' }
@@ -122,7 +143,7 @@ SnmpManager >> waitForDataFor: timeout onSocket: aSocket [
 SnmpManager >> watcher [
 
 	| future activeWatches |
-	self traceCr: '---*---'.
+	self traceCr: '---*--- ', DateAndTime now asString.
 	activeWatches := sessions select: [ :each | each watches isNotEmpty ].
 	activeWatches do: [ :sess |
 			sess watches do: [ :oid |
